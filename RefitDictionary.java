@@ -32,22 +32,23 @@ public class RefitDictionary{
 		// Load up file reader
 		String fileNameInput = args[0];
 		String fileNameOutput = args[1];
-		Scanner dicScan = getScanner(fileNameInput);
+		Scanner scan = getScanner(fileNameInput);
+		BufferedWriter writer = openFile(fileNameOutput);
 		System.out.println("Files Found");
 		
 		// Get number of words in list
 		int totalWords = 0;
-		while(dicScan.hasNextLine()){
-			dicScan.nextLine();
+		while(scan.hasNextLine()){
+			scan.nextLine();
 			totalWords++;
 		}		
 		
 		// Get rid of duplicates and single letter words
 		int uniqueWords = 0;
-		dicScan = getScanner(fileNameInput);
+		scan = getScanner(fileNameInput);
 		Hashtable<String, Boolean> unsortedDictionary = new Hashtable<String, Boolean>();
 		for(int i = 0; i < totalWords; i++){
-			String input = (String) dicScan.nextLine();
+			String input = (String) scan.nextLine();
 			input = input.toLowerCase();
 			if(!unsortedDictionary.containsKey(input) && input.length() > 1){
 				uniqueWords++;
@@ -56,7 +57,7 @@ public class RefitDictionary{
 		}
 		System.out.println("Unique/Total = "+uniqueWords+"/"+totalWords);
 		
-		// Sort the dictionary (for look not performance)
+		// Sort the dictionary
 		Enumeration words = unsortedDictionary.keys();
 		String[] sortedWords = new String[uniqueWords];
 		int index = 0;
@@ -67,7 +68,6 @@ public class RefitDictionary{
 		Arrays.sort(sortedWords);
 		
 		// Rewrite it to the file
-		BufferedWriter writer = openFile(fileNameOutput);
 		for(int i = 0; i < sortedWords.length; i++){
 			try{
 				writer.write(sortedWords[i]);
@@ -81,18 +81,16 @@ public class RefitDictionary{
 		}
 		
 		// Close the file
-		try{
-			writer.close();
-		}
-		catch(IOException e){
-			e.printStackTrace();
-		}
+		try{writer.close();}
+		catch(IOException e){e.printStackTrace();}
 		
 		System.out.println("Done");
 	
 	}
 
-	//Find the file and create a scanner object
+	/*	getScanner(String filename)
+	 *		Find the file and create a scanner object, handle the error
+	 */
 	public static Scanner getScanner(String filename){
 		Scanner newScanner = null;
 			try{
@@ -104,16 +102,11 @@ public class RefitDictionary{
 		}
 		return newScanner;
 	}	
-	
-	//Fill up the dictionary
-	static String[] fillDictionary(Scanner ai, int size){
-		String[] dictionary = new String[size];
-		for(int i = 0; i < size; i++){
-			dictionary[i] = (String) ai.nextLine();
-		}
-		return dictionary;
-	}
-	
+
+	/*
+	 *	openFile(String filename)
+	 *		Open up a file to overwrite on, create it if it doesn't exist
+	 */	
 	public static BufferedWriter openFile(String fileName){
 		try{
 			File file = new File(fileName);

@@ -10,6 +10,7 @@ class Converter:
         for word in value:
             if (len(word) < 2):
                 value.remove(word)
+		
         while('' in value):
             value.remove('')
         

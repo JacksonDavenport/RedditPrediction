@@ -23,7 +23,7 @@ totalFile = open('dictionary.txt', 'w+')
 # Begin collection, reddit max size allowed is 1000
 print ("Begin Collection\n")
 count = 1
-size = 100
+size = 1000
 
 # Scroll through each subreddit included
 for subreddit_name in (sys.argv[1:]):
@@ -40,9 +40,9 @@ for subreddit_name in (sys.argv[1:]):
     for submission in subreddit.get_top_from_all(limit = size):
         titleArray = Converter.stringToArray(submission.title)
    
-        trainFile.write("\"")
-        trainFile.write(subreddit_name)
-        trainFile.write("\" ")
+        #trainFile.write("\"")
+        #trainFile.write(subreddit_name)
+        #trainFile.write("\" ")
         for word in titleArray:
             totalFile.write(word)
             totalFile.write("\n")
