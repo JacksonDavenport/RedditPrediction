@@ -49,9 +49,9 @@ public class CreateDistributions{
 			//System.out.println(textList);  
 		
 			// Fill in the elements for this String line
-			for(int i = 0; i < textList.size()-1; i++){
+			for(int i = 1; i < textList.size(); i++){
 				String wordBase = textList.get(i);
-				String wordFollow = textList.get(i+1);
+				String wordFollow = textList.get(i-1);
 				if(!bigramDistribution.containsKey(wordBase)){
 					BigramElement returnedBD = bigramDistribution.put(wordBase, new BigramElement(wordBase));
 				}
