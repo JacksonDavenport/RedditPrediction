@@ -14,11 +14,15 @@ for subreddit_name in (sys.argv[1:]):
     print ("Search: /r/", subreddit_name)
 	
 # Open the reddit bot
-user_agent = ("j1davenp Learning0.1")
+user_agent = ("RedditTitlePrediction - j1davenp")
 r = praw.Reddit(user_agent = user_agent)
 
+# Create the directory for the training files if it does not exists
+if not os.path.exists("Training_Files"):
+    os.makedirs("Training_Files")
+
 # Open the file to build the overall dictionary
-totalFile = open(('Training_Files\\' + 'dictionary.txt'), 'w+')
+totalFile = open(('Training_Files' + os.sep + 'dictionary.txt'), 'w+')
 
 # Begin collection, reddit max size allowed is 1000
 print ("Begin Collection\n")
@@ -32,7 +36,7 @@ for subreddit_name in (sys.argv[1:]):
     print ("Begin collection for /r/", subreddit_name)
 
     # Open the file for the subreddit
-    trainFileName = "Training_Files\\Dictionary_" + subreddit_name + ".txt"
+    trainFileName = "Training_Files" + os.sep + "Dictionary_" + subreddit_name + ".txt"
     trainFile = open(trainFileName, 'w+')
 	
     count = 1;	
@@ -58,8 +62,6 @@ for subreddit_name in (sys.argv[1:]):
 		
 totalFile.close()
 
-# Use this java application to lower case, sort, and remove duplicates
-os.system('Java RefitDictionary dictionary.txt sortedDictionary.txt')
 
 
 

@@ -204,7 +204,6 @@ public class CreateDistributions{
 			File directory = new File(directoryPath);
 			File file = new File(directory, fileName);
 			if(!file.exists()){
-				System.out.println(file.toString());		
 				file.createNewFile();
 			}
 			return (new BufferedWriter(new FileWriter(file.getAbsoluteFile()))); 

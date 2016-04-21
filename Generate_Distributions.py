@@ -16,6 +16,7 @@ for subreddit_name in (sys.argv[1:]):
     command = "Java CreateDistributions " + subreddit_name
     os.system(command)
 
-
+# Use this java application to lower case, sort, and remove duplicates
+os.system('Java RefitDictionary dictionary.txt sortedDictionary.txt')
 
 

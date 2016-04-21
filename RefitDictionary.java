@@ -112,7 +112,9 @@ public class RefitDictionary{
 	 */	
 	public static BufferedWriter openFile(String fileName){
 		try{
-			File file = new File(fileName);
+			String directoryPath = System.getProperty("user.dir")+System.getProperty("file.separator")+"Training_Files";
+			File directory = new File(directoryPath);
+			File file = new File(directory, fileName);
 			if(!file.exists()){
 				file.createNewFile();
 			}
