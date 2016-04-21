@@ -6,33 +6,33 @@ import java.util.Enumeration;
  *  Author: Jackson Davenport
  *
  *	This is a helper class of a single bigram element. An element is the base
- *  word and a hashmap of the following words and their counts. This class
+ *  word and a hashmap of the previous words and their counts. This class
  *  handles the table operations while the structure to hold all these is held
  *  elsewhere.
  */
 public class BigramElement{
 	private String baseWord;
-	private Hashtable<String, Integer> followingWord;
+	private Hashtable<String, Integer> previousWord;
 	private int totalCount;
 		
 	public BigramElement(String word){
 		baseWord = word;
-		followingWord = new Hashtable<String, Integer>();
+		previousWord = new Hashtable<String, Integer>();
 		totalCount = 0;
 	}
 		
 	/*  addWord(String word)
-	 *	    Takes as input the following word, so either increment the
+	 *	    Takes as input the previous word, so either increment the
 	 *      count or add the new instance to the list
 	 */
 	public void addWord(String word){
 		// If the word is already tracked increment the count
-		if(followingWord.containsKey(word)){
-			int value = followingWord.get(word) + 1;
-			followingWord.put(word, value);
+		if(previousWord.containsKey(word)){
+			int value = previousWord.get(word) + 1;
+			previousWord.put(word, value);
 		}
 		else{// Otherwise add it into the hash table with count = 1
-			followingWord.put(word, 1);
+			previousWord.put(word, 1);
 		}
 		totalCount++;
 	}
@@ -84,13 +84,13 @@ public class BigramElement{
 	 */
 	  
 	public int getCount(String word){
-		return followingWord.get(word);
+		return previousWord.get(word);
 	}
 	public int getTotalCount(){
 		return totalCount;
 	}
 	public Enumeration getKeys(){
-		return followingWord.keys();
+		return previousWord.keys();
 	}
 	public String getWord(){
 		return baseWord;

@@ -2,10 +2,15 @@
  *	File:   CreateDistributions.java	
  *  Author: Jackson Davenport
  *
- *  Takes in as the input two filenames. One is the filename of the list of
- *  all words which contains duplciates and is unsorted. This will take that
- *  text file and convert it to sorted, unique, and all lowercase and output 
- *  it to the filename specified as the 2nd input.
+ *  Takes in as the input the desired subreddit, and determines grabs the
+ *  input file based on the naming convention used. This will create the 
+ *  bigram and unigram distributions based off the dictionary list which
+ *  is a file of the titles per subreddit. Outputs two files of the words
+ *  counts in all lowercase as well.
+ *
+ *	Unigram: word | count
+ *	Bigram:  word | previousword | count
+ *
  */
 
 import java.io.File;
@@ -25,48 +30,104 @@ public class CreateDistributions{
 	public static void main(String[] args){
 		System.out.println("Start: CreateDistribution");
 		// Check input
-		if(args.length != 2){
-			System.out.println("Invalid Input: Include two filenames");
+		if(args.length != 1){
+			System.out.println("Invalid Input: Include input [subreddit]");
 			System.out.println("args.length = " + args.length);
 			System.exit(0);
 		}
 		
-		// Load up file reader
-		String fileNameInput = args[0];
-		String fileNameOutput = args[1];
+		// Load up file reader and determine files based on naming convention and subreddit
+		String fileNameInput = "Dictionary_" + args[0] + ".txt";
+		String fileNameOutputUni = "Unigram_" + args[0] + ".txt";
+		String fileNameOutputBi  = "Bigram_" + args[0] + ".txt";
 		Scanner scan = getScanner(fileNameInput);
-		BufferedWriter writer = openFile(fileNameOutput);
+		BufferedWriter writerUni = openFile(fileNameOutputUni);
+		BufferedWriter writerBi  = openFile(fileNameOutputBi);
 		System.out.println("Files Found");
 			
-		// Create the overlying distribution table
+		// Create the overlying unigram and bigram distribution table
 		Hashtable<String, BigramElement> bigramDistribution = new Hashtable<String, BigramElement>(); 
-		 
+		Hashtable<String, Integer> unigramDistribution = new Hashtable<String, Integer>();
+		
 		// Go through the file and grab it line by line
+		int totalCount = 0;
+		String inputLine, wordBase, wordPrev;
 		while(scan.hasNextLine()){
-			String inputLine = (String) scan.nextLine();
+			inputLine = (String) scan.nextLine();
 			inputLine = inputLine.toLowerCase();
 			ArrayList<String> textList = new ArrayList<String>(Arrays.asList(inputLine.split(" ")));
 			//System.out.println(textList);  
 		
-			// Fill in the elements for this String line
-			for(int i = 1; i < textList.size(); i++){
-				String wordBase = textList.get(i);
-				String wordFollow = textList.get(i-1);
-				if(!bigramDistribution.containsKey(wordBase)){
-					BigramElement returnedBD = bigramDistribution.put(wordBase, new BigramElement(wordBase));
-				}
-				bigramDistribution.get(wordBase).addWord(wordFollow);
+			// Handle very first word specially
+			wordBase = textList.get(0);
+			if(!unigramDistribution.containsKey(wordBase)){
+				unigramDistribution.put(wordBase, 1);
 			}
+			else{
+				unigramDistribution.put(wordBase, unigramDistribution.get(wordBase) + 1);
+			}
+		
+			// Fill in the elements for this String line starting with the 2nd word
+			for(int i = 1; i < textList.size(); i++){
+				wordBase = textList.get(i);
+				wordPrev = textList.get(i-1);
+				// Bigram handling
+				if(!bigramDistribution.containsKey(wordBase)){
+					bigramDistribution.put(wordBase, new BigramElement(wordBase));
+				}
+				bigramDistribution.get(wordBase).addWord(wordPrev);
+				
+				// Unigram handling
+				if(!unigramDistribution.containsKey(wordBase)){
+					unigramDistribution.put(wordBase, 1);
+				}
+				else{
+					unigramDistribution.put(wordBase, unigramDistribution.get(wordBase) + 1);
+				}
+			}
+			totalCount++;
 		}
 		
-		// Output the bigram distribution to the file
-		printBigramDistribution(bigramDistribution, writer);
+		// Output the unigram distribution to the file
+		printUnigramDistribution(unigramDistribution, writerUni);
 		
-		// Close the file
-		try{writer.close();}
-		catch(IOException e){e.printStackTrace();}
+		// Output the bigram distribution to the file
+		printBigramDistribution(bigramDistribution, writerBi);
+		
+		// Close the files
+		try{
+			writerUni.close();
+			writerBi.close();
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
 		
 		System.out.println("Done: CreateDistribution");
+	}
+	
+	/*  printBigramDistribution
+	 *	    Take the hashtable for the complete bigram distribution and print
+	 *	    it out nicely to a file
+	 */
+	public static void printUnigramDistribution(Hashtable<String, Integer> uni, BufferedWriter outFile){	
+		Enumeration words = uni.keys();
+		while(words.hasMoreElements()){
+			String key = (String) words.nextElement();
+			int value = uni.get(key);
+			String toWrite = (key + "\t" + value);
+
+			// Write to the file
+			try{
+				outFile.write(toWrite);
+				if(words.hasMoreElements()){
+					outFile.newLine();
+				}
+			}
+			catch(IOException e){
+				e.printStackTrace();
+			}
+		}		
 	}
 	
 	/*  printBigramDistribution
