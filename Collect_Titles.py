@@ -18,12 +18,12 @@ user_agent = ("j1davenp Learning0.1")
 r = praw.Reddit(user_agent = user_agent)
 
 # Open the file to build the overall dictionary
-totalFile = open('dictionary.txt', 'w+')
+totalFile = open(('Training_Files\\' + 'dictionary.txt'), 'w+')
 
 # Begin collection, reddit max size allowed is 1000
 print ("Begin Collection\n")
 count = 1
-size = 1000
+size = 10
 
 # Scroll through each subreddit included
 for subreddit_name in (sys.argv[1:]):
@@ -32,7 +32,7 @@ for subreddit_name in (sys.argv[1:]):
     print ("Begin collection for /r/", subreddit_name)
 
     # Open the file for the subreddit
-    trainFileName = "Dictionary_" + subreddit_name + ".txt"
+    trainFileName = "Training_Files\\Dictionary_" + subreddit_name + ".txt"
     trainFile = open(trainFileName, 'w+')
 	
     count = 1;	

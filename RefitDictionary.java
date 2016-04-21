@@ -91,13 +91,16 @@ public class RefitDictionary{
 	/*	getScanner(String filename)
 	 *		Find the file and create a scanner object, handle the error
 	 */
-	public static Scanner getScanner(String filename){
+	public static Scanner getScanner(String fileName){
 		Scanner newScanner = null;
-			try{
-			newScanner = new Scanner(new FileReader(filename));
+		try{
+			String directoryPath = System.getProperty("user.dir")+System.getProperty("file.separator")+"Training_Files";
+			File directory = new File(directoryPath);
+			File file = new File(directory, fileName);
+			newScanner = new Scanner(new FileReader(file));
 		}
 		catch (FileNotFoundException e){
-			System.out.println("Did not fine file: " + filename);
+			System.out.println("Did not find file: " + fileName);
 			System.exit(0);
 		}
 		return newScanner;
