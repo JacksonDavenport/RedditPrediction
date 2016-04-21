@@ -9,8 +9,10 @@ It calculates the log likelihood through unigram and bigram distributions.
 
 ### How To Run
 Python Collect_Titles.py [subreddit1] [subreddit2] [...]  
+Python Generate_Distributions.py [subreddit1] [subreddit2] [...]  
 Java RefitDictionary [total file] [output file]  
 Java CreateDistributions [training file]  
+
 
 ### Program Description
 
@@ -18,8 +20,11 @@ Collect_Titles (Python)
   * Collect a set of titles per subreddit and use this set as a basis for the distributions
   * Uses PRAW to scroll through reddit and collect the titles
   * There is a field hardcoded within the file to say how many to collect per subreddit (MAX=1000)
-  * Calls CreateDistributions and RefitDictionary per subreddit
+  * Calls RefitDictionary
 
+Generate_Distributions (Python)
+  * Run the Java program CreateDistributions for a list of subreddits
+  
 CreateDistributions (Java)
   * Create the bigram and unigram distributions for a given subreddit
   * Determine the filenames using the naming convention supplied
