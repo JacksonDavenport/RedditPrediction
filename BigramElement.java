@@ -1,6 +1,3 @@
-import java.util.Hashtable;
-import java.util.Enumeration;
-
 /*
  *  File:   BigramElement
  *  Author: Jackson Davenport
@@ -10,6 +7,9 @@ import java.util.Enumeration;
  *  handles the table operations while the structure to hold all these is held
  *  elsewhere.
  */
+import java.util.Hashtable;
+import java.util.Enumeration;
+ 
 public class BigramElement{
 	private String baseWord;
 	private Hashtable<String, Integer> previousWord;
