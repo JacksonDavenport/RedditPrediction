@@ -36,7 +36,16 @@ public class BigramElement{
 		}
 		totalCount++;
 	}
-	
+
+	/*  addWord(String word, int count)
+	 *	    Takes as input the previous word and set it to the 
+	 *      desired count
+	 */
+	public void addWord(String word, int count){
+		previousWord.put(word, count);
+		totalCount += count;
+	}
+		
 	/*
 	 *	Object Methods
 	 */
@@ -94,5 +103,8 @@ public class BigramElement{
 	}
 	public String getWord(){
 		return baseWord;
+	}
+	public boolean containsKey(String word){
+		return previousWord.containsKey(word);
 	}
 }

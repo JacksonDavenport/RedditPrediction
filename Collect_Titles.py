@@ -27,7 +27,7 @@ totalFile = open(('Training_Files' + os.sep + 'dictionary.txt'), 'w+')
 # Begin collection, reddit max size allowed is 1000
 print ("Begin Collection\n")
 count = 1
-size = 10
+size = 1000
 
 # Scroll through each subreddit included
 for subreddit_name in (sys.argv[1:]):
