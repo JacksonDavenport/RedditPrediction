@@ -9,8 +9,15 @@ from Converter import Converter
 if(len(sys.argv) < 2):
     print ("Invalid input, please include subreddit name(s)")
     sys.exit()
+
+# Use specified subreddits or the top from the list
+if(len(sys.argv) == 2 and sys.argv[1] == "top"):
+    subreddit_list = Converter.makeSubredditList()
+else:
+    subreddit_list = sys.argv[1:]
+	
 # Diagnostics
-for subreddit_name in (sys.argv[1:]):
+for subreddit_name in subreddit_list:
     print ("Search: /r/", subreddit_name)
 	
 # Open the reddit bot
@@ -30,7 +37,7 @@ count = 1
 size = 1000
 
 # Scroll through each subreddit included
-for subreddit_name in (sys.argv[1:]):
+for subreddit_name in subreddit_list:
     # Open the subreddit
     subreddit = r.get_subreddit(subreddit_name)
     print ("Begin collection for /r/", subreddit_name)

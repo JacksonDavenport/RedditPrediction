@@ -1,3 +1,6 @@
+import sys
+import os
+
 class Converter:
     # Convert a unicode string into an array of words
 	# retain only letters and no single letter words
@@ -15,3 +18,20 @@ class Converter:
             value.remove('')
         
         return value
+
+	# Given a list of the top subreddits from redditlist.com convert it 
+	# to a list of subreddits
+    def makeSubredditList():
+        fileName = "Training_Files" + os.sep + "TopSubreddits.txt"
+        file = open(fileName, 'r')
+        subredditList = []
+		
+        lineCount = 1
+        for line in file:
+		    # Skip two lines, read a line
+            if lineCount % 3 == 0:
+                subredditList.append(line.split()[0])    
+            
+            lineCount = lineCount + 1
+        
+        return subredditList

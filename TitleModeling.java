@@ -18,7 +18,7 @@ import java.util.Enumeration;
 public class TitleModeling {
 
 	public static void main(String[] args){
-		System.out.println("\tStart: TitleModeling");
+		//System.out.println("\tStart: TitleModeling");
 		long startTime = System.nanoTime();
 		// Check input
 		if(args.length != 2){
@@ -32,7 +32,7 @@ public class TitleModeling {
 		String fileNameInputBi  = "Bigram_" + args[0] + ".txt";
 		Scanner scanUni = getScanner(fileNameInputUni);
 		Scanner scanBi  = getScanner(fileNameInputBi);
-		System.out.println("Files Found");
+		//System.out.println("Files Found");
 
 		//                                                //
 		// Rebuild the distributions given the text files //
@@ -70,6 +70,7 @@ public class TitleModeling {
 		}
 		long endTime = System.nanoTime();
 		System.out.println("Took " + (endTime-startTime)/1000000 + " milliseconds to recreate distributions");
+		startTime = endTime;
 		
 		//                              //
 		// Mixture Model of probability //
@@ -110,6 +111,10 @@ public class TitleModeling {
 			}
 		}		
 		
+		endTime = System.nanoTime();
+		System.out.println("Took " + (endTime-startTime)/1000000 + " milliseconds to determine probability per word");
+		startTime = endTime;
+		
 		// Print out probability lists
 		/*
 		System.out.println("Unigram Distribution");
@@ -140,9 +145,12 @@ public class TitleModeling {
 				previousOptimal = summation;
 			}
 		}
-		System.out.println("Optimal unigram weight:" + optimalY);
+		endTime = System.nanoTime();
+		System.out.println("Took " + (endTime-startTime)/1000000 + " milliseconds to determine optimal weights");
+		startTime = endTime;
 		System.out.println("\n----------------------------------");
 		System.out.println("Subreddit     : /r/" + args[0]);
+		System.out.println("Optimal unigram weight:" + optimalY);
 		System.out.println("Log Likelihood: " + previousOptimal);		
 		System.out.println("----------------------------------");
 	}
