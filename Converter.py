@@ -4,6 +4,7 @@ import os
 class Converter:
     # Convert a unicode string into an array of words
 	# retain only letters and no single letter words
+    @staticmethod
     def stringToArray(value):
         for c in value:
 			# [65-90] and [97-122]
@@ -21,6 +22,7 @@ class Converter:
 
 	# Given a list of the top subreddits from redditlist.com convert it 
 	# to a list of subreddits
+    @staticmethod
     def makeSubredditList():
         fileName = "Training_Files" + os.sep + "TopSubreddits.txt"
         file = open(fileName, 'r')
