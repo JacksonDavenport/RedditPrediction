@@ -9,8 +9,9 @@
  */
 import java.util.Hashtable;
 import java.util.Enumeration;
+import java.io.Serializable;
  
-public class BigramElement{
+public class BigramElement implements Serializable{
 	private String baseWord;
 	private Hashtable<String, Integer> previousWord;
 	private int totalCount;

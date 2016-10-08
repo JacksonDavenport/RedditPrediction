@@ -12,7 +12,9 @@
  *	Bigram:  word | previousword | count
  *
  */
-
+import java.io.Serializable;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -40,12 +42,14 @@ public class CreateDistributions{
 		String fileNameInput = "Dictionary_" + args[0] + ".txt";
 		String fileNameOutputUni = "Unigram_" + args[0] + ".txt";
 		String fileNameOutputBi  = "Bigram_" + args[0] + ".txt";
+		String fileNameOutputDi  = "Distribution_" + args[0] + ".ser";
 		Scanner scan = getScanner(fileNameInput);
 		BufferedWriter writerUni = openFile(fileNameOutputUni);
 		BufferedWriter writerBi  = openFile(fileNameOutputBi);
 		System.out.println("Files Found");
 			
 		// Create the overlying unigram and bigram distribution table
+		Distributions dist = new Distributions(args[0]);
 		Hashtable<String, BigramElement> bigramDistribution = new Hashtable<String, BigramElement>(); 
 		Hashtable<String, Integer> unigramDistribution = new Hashtable<String, Integer>();
 		
@@ -60,6 +64,7 @@ public class CreateDistributions{
 		
 			// Handle very first word specially
 			wordBase = textList.get(0);
+			dist.unigramAddWord(wordBase);
 			if(!unigramDistribution.containsKey(wordBase)){
 				unigramDistribution.put(wordBase, 1);
 			}
@@ -71,6 +76,11 @@ public class CreateDistributions{
 			for(int i = 1; i < textList.size(); i++){
 				wordBase = textList.get(i);
 				wordPrev = textList.get(i-1);
+				
+				// Distribution
+				dist.unigramAddWord(wordBase);
+				dist.bigramAddWord(wordPrev, wordBase);
+								
 				// Bigram handling
 				if(!bigramDistribution.containsKey(wordBase)){
 					bigramDistribution.put(wordBase, new BigramElement(wordBase));
@@ -94,6 +104,9 @@ public class CreateDistributions{
 		// Output the bigram distribution to the file
 		printBigramDistribution(bigramDistribution, writerBi);
 		
+		// Output the distribution to serializable memory
+		serializeDistribution(dist, fileNameOutputDi);
+		
 		// Close the files
 		try{
 			writerUni.close();
@@ -105,6 +118,33 @@ public class CreateDistributions{
 		
 		System.out.println("Done: CreateDistribution");
 	}
+	
+	
+	/*  serializeDistribution
+	 *		Take the distribution object and serialize it into memory.
+	 */
+	public static void serializeDistribution(Distributions d, String fileName){
+		// Output the distribution to serializable memory
+		try{
+			// Get and if necessary create the file
+			String directoryPath = System.getProperty("user.dir")+System.getProperty("file.separator")+"Training_Files";
+			File directory = new File(directoryPath);
+			File file = new File(directory, fileName);
+			if(!file.exists()){
+				file.createNewFile();
+			}		
+        	FileOutputStream fileOut = new FileOutputStream(file);
+			
+			// Serialize it and output it
+			ObjectOutputStream out = new ObjectOutputStream(fileOut);
+			out.writeObject(d);
+			out.close();
+			fileOut.close();
+      	}catch(IOException i){
+			i.printStackTrace();
+			System.exit(0);
+      	}
+	}	
 	
 	/*  printBigramDistribution
 	 *	    Take the hashtable for the complete bigram distribution and print
@@ -163,7 +203,6 @@ public class CreateDistributions{
 	 *	    it out nicely to console
 	 */
 	public static void printBigramDistribution(Hashtable<String, BigramElement> bd){
-		
 		Enumeration firstWord = bd.keys();
 		while(firstWord.hasMoreElements()){
 			String firstKey = (String) firstWord.nextElement();	//

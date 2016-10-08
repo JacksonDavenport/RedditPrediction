@@ -6,7 +6,10 @@
  *  recreate the distributions saved and then check the probability of the
  *  given title according to the distribution belonging to this subreddit.
  */
- 
+import java.io.Serializable;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.io.IOException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -32,6 +35,7 @@ public class TitleModeling {
 		String fileNameInputBi  = "Bigram_" + args[0] + ".txt";
 		Scanner scanUni = getScanner(fileNameInputUni);
 		Scanner scanBi  = getScanner(fileNameInputBi);
+		
 		//System.out.println("Files Found");
 
 		//                                                //
@@ -68,6 +72,7 @@ public class TitleModeling {
 			}
 			bigramDistribution.get(baseWord).addWord(prevWord, count);
 		}
+		
 		long endTime = System.nanoTime();
 		System.out.println("Took " + (endTime-startTime)/1000000 + " milliseconds to recreate distributions");
 		startTime = endTime;
@@ -92,7 +97,7 @@ public class TitleModeling {
 				PuList.add(PuCount / totalUniCount);
 			}
 			else{
-				PuList.add((double) 0.0000001);
+				PuList.add((double) 0.000001);
 			}
 		}
 				
@@ -107,7 +112,7 @@ public class TitleModeling {
 				PbList.add(PbCount / PbSize);
 			}
 			else{
-				PbList.add((double) 0.0000001);
+				PbList.add((double) 0.000001);
 			}
 		}		
 		
@@ -173,5 +178,41 @@ public class TitleModeling {
 		return newScanner;
 	}
 	
+	public static Distributions deserializeDistribution(String fileName){
+		Distributions dist = null;
+		try {
+			String directoryPath = System.getProperty("user.dir")+System.getProperty("file.separator")+"Training_Files";
+			File directory = new File(directoryPath);
+			File file = new File(directory, fileName);
+			FileInputStream fileIn = new FileInputStream(file);
+			ObjectInputStream in = new ObjectInputStream(fileIn);
+			
+			dist = (Distributions) in.readObject();
+			in.close();
+			fileIn.close();
+		}
+		catch(IOException i) {
+			System.out.println("IO Exception on file: " + fileName);
+			i.printStackTrace();
+			return null;
+		}
+		catch(ClassNotFoundException c) {
+			System.out.println("Distribution class not found");
+			c.printStackTrace();
+			return null;
+		}
+		return dist;
+	}
+	
 }
+
+/*
+Data via deserializing the data, however, results showed that it was about 3x slower to do so
+
+String fileNameInputSer = "Distribution_" + args[0] + ".ser";
+Distributions distribution = deserializeDistribution(fileNameInputSer);
+Hashtable<String, BigramElement> bigramDistribution = distribution.getBigramDistribution();
+Hashtable<String, Integer> unigramDistribution = distribution.getUnigramDistribution();
+double totalUniCount = (double) distribution.getTotalUni();
+*/
 
