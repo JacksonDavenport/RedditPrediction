@@ -33,8 +33,8 @@ public class TitleModeling {
 		// Load up file readers based off of the subreddit passed in
 		String fileNameInputUni = "Unigram_" + args[0] + ".txt";
 		String fileNameInputBi  = "Bigram_" + args[0] + ".txt";
-		Scanner scanUni = getScanner(fileNameInputUni);
-		Scanner scanBi  = getScanner(fileNameInputBi);
+		Scanner scanUni = Util.getScanner(fileNameInputUni);
+		Scanner scanBi  = Util.getScanner(fileNameInputBi);
 		
 		//System.out.println("Files Found");
 
@@ -159,58 +159,14 @@ public class TitleModeling {
 		System.out.println("Log Likelihood: " + previousOptimal);		
 		System.out.println("----------------------------------");
 	}
-	
-	/*	getScanner(String filename)
-	 *		Find the file and create a scanner object, handle the error
-	 */
-	public static Scanner getScanner(String fileName){
-		Scanner newScanner = null;
-		try{
-			String directoryPath = System.getProperty("user.dir")+System.getProperty("file.separator")+"Training_Files";
-			File directory = new File(directoryPath);
-			File file = new File(directory, fileName);
-			newScanner = new Scanner(new FileReader(file));
-		}
-		catch (FileNotFoundException e){
-			System.out.println("Did not find file: " + fileName);
-			System.exit(0);
-		}
-		return newScanner;
-	}
-	
-	public static Distributions deserializeDistribution(String fileName){
-		Distributions dist = null;
-		try {
-			String directoryPath = System.getProperty("user.dir")+System.getProperty("file.separator")+"Training_Files";
-			File directory = new File(directoryPath);
-			File file = new File(directory, fileName);
-			FileInputStream fileIn = new FileInputStream(file);
-			ObjectInputStream in = new ObjectInputStream(fileIn);
-			
-			dist = (Distributions) in.readObject();
-			in.close();
-			fileIn.close();
-		}
-		catch(IOException i) {
-			System.out.println("IO Exception on file: " + fileName);
-			i.printStackTrace();
-			return null;
-		}
-		catch(ClassNotFoundException c) {
-			System.out.println("Distribution class not found");
-			c.printStackTrace();
-			return null;
-		}
-		return dist;
-	}
-	
+		
 }
 
 /*
 Data via deserializing the data, however, results showed that it was about 3x slower to do so
 
 String fileNameInputSer = "Distribution_" + args[0] + ".ser";
-Distributions distribution = deserializeDistribution(fileNameInputSer);
+Distributions distribution = Util.deserializeDistribution(fileNameInputSer);
 Hashtable<String, BigramElement> bigramDistribution = distribution.getBigramDistribution();
 Hashtable<String, Integer> unigramDistribution = distribution.getUnigramDistribution();
 double totalUniCount = (double) distribution.getTotalUni();
