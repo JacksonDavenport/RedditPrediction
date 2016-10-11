@@ -30,6 +30,8 @@ public class Util{
 	public static final String TRAINING_FILES = "Training_Files";
 	public static final String ROOT_PATH = System.getProperty("user.dir")+System.getProperty("file.separator");
 
+	public static long prevTime;
+	
 	public Util(){
 	
 	
@@ -124,10 +126,10 @@ public class Util{
 		return newScanner;
 	}
 
-	/*	openFile
+	/*	openWriteFile
 	 *		Open up a file to overwrite on, create it if it doesn't exist
 	 */
-	public static BufferedWriter openFile(String fileName){
+	public static BufferedWriter openWriteFile(String fileName){
 		try{
 			String directoryPath = ROOT_PATH + TRAINING_FILES;
 			File directory = new File(directoryPath);
@@ -142,7 +144,68 @@ public class Util{
 			System.exit(0);
 			return null;
 		}
-	}	
+	}
+
+	/*	openReadFile
+	 *		Open up a file to overwrite on, create it if it doesn't exist
+	 */
+	public static BufferedReader openReadFile(String fileName){
+		String directoryPath = ROOT_PATH + TRAINING_FILES;
+		try{
+			File directory = new File(directoryPath);
+			File file = new File(directory, fileName);
+			if(!file.exists()){
+				throw new FileNotFoundException();
+			}
+			return (new BufferedReader(new FileReader(file.getAbsoluteFile()))); 
+		}
+		catch(IOException e){
+			System.err.println("Error:"+ directoryPath + "\\" + fileName + " - not found");
+			e.printStackTrace();
+			System.exit(0);
+		}
+		return null;
+	}		
+	
+	/*	getNextLine
+	 *		Get the next line in the BufferedReader, return null when at end
+	 *		of file
+	 */
+	public static String getNextLine(BufferedReader br){
+		try{
+			String s = br.readLine();
+			return s;
+		}
+		catch(IOException e){
+			return null;
+		}
+	}
+	
+	/*	closeFile
+	 *		Close the file and print the stack trace as necessary
+	 */
+	public static void closeFile(BufferedReader br){
+		try{
+			br.close();
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+			
+	}
+
+	/*	closeFile
+	 *		Close the file and print the stack trace as necessary
+	 */
+	public static void closeFile(BufferedWriter br){
+		try{
+			br.close();
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+			
+	}
 	
 	/*  serializeDistribution
 	 *		Take the distribution object and serialize it into memory to the
@@ -199,6 +262,21 @@ public class Util{
 			return null;
 		}
 		return dist;
+	}
+	
+	/*	initTime
+	 *		Initialize the start time
+	 */
+	public static void initTime(){
+		prevTime = System.nanoTime();
+	}
+	
+	/*	logTime
+	 *		Print the phrase of the log time
+	 */
+	public static void logTime(String endPhrase){
+		System.out.println("Took " + ((System.nanoTime() - prevTime)/1000000) + " " + endPhrase);
+		prevTime = System.nanoTime();
 	}
 	
 }
