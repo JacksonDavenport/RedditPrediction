@@ -37,3 +37,20 @@ class Converter:
             lineCount = lineCount + 1
         
         return subredditList
+
+	# Given a list of the top subreddits from the file output it to a file
+    @staticmethod
+    def printSubredditList():
+        readFileName = "Training_Files" + os.sep + "TopSubreddits.txt"
+        readFile = open(readFileName, 'r') 	
+        writeFileName = "Training_Files" + os.sep + "Subreddits.txt"
+        writeFile = open(writeFileName, 'w')
+        
+        subredditList = []
+        lineCount = 1
+        for line in readFile:
+		    # Skip two lines, read a line
+            if lineCount % 3 == 0:
+                writeFile.write(line.split()[0] + "\n")
+            
+            lineCount = lineCount + 1	
