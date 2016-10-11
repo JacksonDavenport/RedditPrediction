@@ -3,8 +3,8 @@ import java.util.Hashtable;
 
 public class Distributions implements Serializable{
 
-	public Hashtable<String, BigramElement> bigramDistribution;
 	public Hashtable<String, Integer> unigramDistribution;
+	public Hashtable<String, BigramElement> bigramDistribution;
 	
 	public String subreddit;
 	public int totalUni;
@@ -15,6 +15,13 @@ public class Distributions implements Serializable{
 
 		subreddit = s;
 		totalUni = 0;
+	}
+	
+	public Distributions(String subreddit, int totalUni, Hashtable<String, Integer> unigramDistribution, Hashtable<String, BigramElement> bigramDistribution){
+		this.subreddit = subreddit;
+		this.totalUni = totalUni;
+		this.unigramDistribution = unigramDistribution;
+		this.bigramDistribution = bigramDistribution;		
 	}
 	
 	public void bigramAddWord(String wordPrev, String wordBase){

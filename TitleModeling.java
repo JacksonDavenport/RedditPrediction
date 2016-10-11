@@ -6,6 +6,7 @@
  *  recreate the distributions saved and then check the probability of the
  *  given title according to the distribution belonging to this subreddit.
  */
+import java.io.BufferedReader;
 import java.io.Serializable;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
@@ -22,7 +23,7 @@ public class TitleModeling {
 
 	public static void main(String[] args){
 		//System.out.println("\tStart: TitleModeling");
-		long startTime = System.nanoTime();
+		Util.initTime();
 		// Check input
 		if(args.length != 2){
 			System.out.println("Invalid Input: Include input [subreddit] [\"Example Title\"]");
@@ -30,59 +31,34 @@ public class TitleModeling {
 			System.exit(0);
 		}
 		
-		// Load up file readers based off of the subreddit passed in
-		String fileNameInputUni = "Unigram_" + args[0] + ".txt";
-		String fileNameInputBi  = "Bigram_" + args[0] + ".txt";
-		Scanner scanUni = Util.getScanner(fileNameInputUni);
-		Scanner scanBi  = Util.getScanner(fileNameInputBi);
+		String subreddit = args[0];
+		String phrase = args[1];
 		
+		// Load up file readers based off of the subreddit passed in
+		String fileNameInputUni = "Unigram_" + subreddit + ".txt";
+		String fileNameInputBi  = "Bigram_" + subreddit + ".txt";
+		BufferedReader readerUni = Util.openReadFile(fileNameInputUni);
+		BufferedReader readerBi  = Util.openReadFile(fileNameInputBi);
 		//System.out.println("Files Found");
 
 		//                                                //
 		// Rebuild the distributions given the text files //
 		//                                                //
-		String[] currentLine;
-		String baseWord, prevWord;
-		int count;
-		
+		RecreateDistributions rd = new RecreateDistributions();
+		Distributions dist = rd.rebuildDistribution(subreddit, readerUni, readerBi);
 		// Unigram Distribution
-		Hashtable<String, Integer> unigramDistribution = new Hashtable<String, Integer>();
-		double totalUniCount = 0;
-		while(scanUni.hasNextLine()){
-			// Split it over the tab
-			currentLine = scanUni.nextLine().split("\t");
-			baseWord = currentLine[0];
-			count = Integer.parseInt(currentLine[1]);
-			unigramDistribution.put(baseWord, count);
-			totalUniCount += count;			
-		}
-		
+		Hashtable<String, Integer> unigramDistribution = dist.getUnigramDistribution();
 		// Bigram Distribution
-		Hashtable<String, BigramElement> bigramDistribution = new Hashtable<String, BigramElement>();
-		while(scanBi.hasNextLine()){
-			// Split it over the tab
-			currentLine = scanBi.nextLine().split("\t");
-			baseWord = currentLine[0];
-			prevWord = currentLine[1];
-			count = Integer.parseInt(currentLine[2]);
-
-			// Add the word | prevWord | count to the set
-			if(!bigramDistribution.containsKey(baseWord)){
-				bigramDistribution.put(baseWord, new BigramElement(baseWord));
-			}
-			bigramDistribution.get(baseWord).addWord(prevWord, count);
-		}
-		
-		long endTime = System.nanoTime();
-		System.out.println("Took " + (endTime-startTime)/1000000 + " milliseconds to recreate distributions");
-		startTime = endTime;
+		Hashtable<String, BigramElement> bigramDistribution = dist.getBigramDistribution();
+				
+		Util.logTime("milliseconds to recreate distributions");
 		
 		//                              //
 		// Mixture Model of probability //
 		//                              //
-		 
-		String test = args[1].toLowerCase();
-		//System.out.println("\t" + test);
+		String baseWord, prevWord, currentLine;
+		double totalUniCount = (double) dist.getTotalUni();		
+		String test = phrase.toLowerCase();
 		String[] parsedTest = test.split(" ");
 		
 		//Keep track of each iteration of probability
@@ -115,10 +91,8 @@ public class TitleModeling {
 				PbList.add((double) 0.000001);
 			}
 		}		
-		
-		endTime = System.nanoTime();
-		System.out.println("Took " + (endTime-startTime)/1000000 + " milliseconds to determine probability per word");
-		startTime = endTime;
+
+		Util.logTime("milliseconds to determine probability per word");
 		
 		// Print out probability lists
 		/*
@@ -150,11 +124,9 @@ public class TitleModeling {
 				previousOptimal = summation;
 			}
 		}
-		endTime = System.nanoTime();
-		System.out.println("Took " + (endTime-startTime)/1000000 + " milliseconds to determine optimal weights");
-		startTime = endTime;
+		Util.logTime("milliseconds to determine optimal weights");
 		System.out.println("\n----------------------------------");
-		System.out.println("Subreddit     : /r/" + args[0]);
+		System.out.println("Subreddit     : /r/" + subreddit);
 		System.out.println("Optimal unigram weight:" + optimalY);
 		System.out.println("Log Likelihood: " + previousOptimal);		
 		System.out.println("----------------------------------");
@@ -165,7 +137,7 @@ public class TitleModeling {
 /*
 Data via deserializing the data, however, results showed that it was about 3x slower to do so
 
-String fileNameInputSer = "Distribution_" + args[0] + ".ser";
+String fileNameInputSer = "Distribution_" + subreddit + ".ser";
 Distributions distribution = Util.deserializeDistribution(fileNameInputSer);
 Hashtable<String, BigramElement> bigramDistribution = distribution.getBigramDistribution();
 Hashtable<String, Integer> unigramDistribution = distribution.getUnigramDistribution();

@@ -44,8 +44,8 @@ public class CreateDistributions{
 		String fileNameOutputBi  = "Bigram_" + args[0] + ".txt";
 		String fileNameOutputDi  = "Distribution_" + args[0] + ".ser";
 		Scanner scan = Util.getScanner(fileNameInput);
-		BufferedWriter writerUni = Util.openFile(fileNameOutputUni);
-		BufferedWriter writerBi  = Util.openFile(fileNameOutputBi);
+		BufferedWriter writerUni = Util.openWriteFile(fileNameOutputUni);
+		BufferedWriter writerBi  = Util.openWriteFile(fileNameOutputBi);
 		System.out.println("Files Found");
 			
 		// Create the overlying unigram and bigram distribution table
@@ -108,14 +108,9 @@ public class CreateDistributions{
 		Util.serializeDistribution(dist, fileNameOutputDi);
 		
 		// Close the files
-		try{
-			writerUni.close();
-			writerBi.close();
-		}
-		catch(IOException e){
-			e.printStackTrace();
-		}
-		
+		Util.closeFile(writerUni);
+		Util.closeFile(writerBi);
+				
 		System.out.println("Done: CreateDistribution");
 	}
 		
