@@ -1,3 +1,13 @@
+/*
+ *	File:   Distributions.java	
+ *  Author: Jackson Davenport
+ *
+ *  Class to manage, hold, and modify the distributions.  The distributions are
+ *  comprised of two hashmaps. The first is a hashmap of the word, the counts,
+ *  and additionally the total count to determine the distributions.
+ *  The second is is the hashmap of hashmaps for the bigram distribution.
+ */
+
 import java.io.Serializable;
 import java.util.Hashtable;
 

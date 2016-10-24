@@ -1,3 +1,11 @@
+/*
+ *	File:   RecreateDistributions.java	
+ *  Author: Jackson Davenport
+ *
+ *  Takes as input two files which are the raw distributions as text files.  
+ *  This file will take those and rebuild the distributions passing back 
+ *  the full Distributions object.
+ */
 import java.io.BufferedReader;
 import java.util.Hashtable;
 import java.util.Enumeration;

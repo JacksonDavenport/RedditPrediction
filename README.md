@@ -14,9 +14,14 @@ Python Find_Best_Fit.py [subreddit1 [subreddit2] [...]
 Java RefitDictionary [total file] [output file]  
 Java CreateDistributions [training file]  
 Java TitleModeling [subreddit] ["phrase to check likelihood for"]
+Java SimWrapper [subreddit] ["phrase to check likelihood for"]
 
 
 ### Program Description
+
+SimWrapper (Java)
+  * Run the TitleModeling simulation through a controller which handles loading the distributions
+  * Can be run with a single subreddit or the top subbreddits by the -t or -top flag
 
 Collect_Titles (Python)
   * Collect a set of titles per subreddit and use this set as a basis for the distributions
@@ -50,6 +55,11 @@ TitleModeling (Java)
 Additional Files
   * Converter.py - Used to help convert titles to a nice form to handle and subreddits to list
   * BigramElement.java - Used to help create the Bigram Distribution
+  * Distributions.java - Used to hold and manage the Distributions (Hashmaps)
+  * RecreateDistributions.java - Used to compartmentalize reading the data file re-creating the distributions
+  * Util.java - Utility class used to help manage file management, reader/writers, logging, etc.
+  * Results.java - Simple Object to hold the likelihood and Subreddit, used with the priority queue
+  * LikelihoodComparator.java - Simple Comparator to be used with Results for the priority queue
 
 ### Additional Details  
 
@@ -69,19 +79,21 @@ attempts to also create the folder Training_Files to store all of these.
 When running the Python scripts if you pass in "top" as the only parameter it will scroll through
 the list of the top subreddits. This list was gathered from <http://redditlist.com/> and copy and
 pasted in a file called "TopSubreddits.txt" within the Training_Files folder. A script in Converter
-converts it from its nasty formatting into a list for the python scripts to use. 
+converts it from its nasty formatting into a list for the python scripts and Java apps to use.
 
 This "top" parameter will allow you to collect and learn from as much data as you want.
 
 ##### Time
 The program makes efficient use of hashtables to model and learn from the distributions and to 
-perform the prediction. Unfortuanately as of now it is time costly to:
-1) Access Reddit for large amount of subreddits for large amount of data (due to cap requests)
-2) Re-create the distributions form the text files in data modeling
-CreateDistributions will write the distribution info to a file to make accessible late, but 
-re-reading and creating the distributions are by far the most time costly portion of the modeling.
+perform the prediction.  The time cost of it has been drastically cut down since the prototype.
+However the stall is largely due to:
+1) Accessing Reddit itself for the data as their are caps on requests per minute
+2) Creating the distributions from the initial data
 
-As I move forward with it I am looking to a means to get around this.
+Moving from Scanner to BufferedReaders as well as a wrapper for creating the Distribution has 
+massively increased the speed of program.  As of now once the distributions are created the 
+simulation can run through the top 250 subreddits and determine order the likelihood of each
+in under 1.5 seconds.
 
 ##### Inspiration
 This was inspired by a desire to practice Python, a personal desire to see if its possible to model
